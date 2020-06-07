@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="static/socket.io.min.js"></script>
+    <script src="static/jquery-3.5.1.min.js"></script>
+    <title>Add question</title>
+</head>
+<body>
+
+<div id="header">
+    Add question to the database
+</div>
+    
+<form>
+
+<Label id="questionlabel" for="question">Question:</Label>
+<textarea id="question" class="input" required></textarea>
+
+
+<div class="option">
+    
+<Label id="optilabel" for="opti">Option i</Label>
+<input type="text" id="opti" class="input" required>
+
+<Label id="optiilabel" for="optii">Option ii</Label>
+<input type="text" id="optii" class="input" required>
+
+<Label id="optiiilabel" for="optiii">Option iii</Label>
+<input type="text" id="optiii" class="input" required>
+
+<Label id="optivlabel" for="optiv">Option iv</Label>
+<input type="text" id="optiv" class="input" required>
+</div>
+
+<Label id="answerlabel" for="answer">Correct answer:</Label>
+<input type="text" id="answer" class="input" required>
+    <br>
+<input type="submit" id="submit" value="Submit">
+</form>
+
+<style>
+
+    .option{
+        
+        width:500px;
+    }
+
+    body{
+        font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+   
+
+    #header
+    {
+        text-align: center;
+        font-size: 30px;
+        width: 500px;
+        padding-left: 440px;
+
+    }
+
+    form{
+        padding-top: 51px;
+        padding-left: 335px;
+    }
+    #question
+    {
+        height: 35px;
+        width: 608px;
+        margin-bottom: -11px;
+    }
+
+    .option
+    {
+        margin-top: 50px;
+        width: 688px;
+    }
+
+    #optiilabel
+    {
+        padding-left: 262px;
+    }
+
+    #opti
+    {
+        margin-left: 30px;;
+    }
+
+    #optiilabel
+    {
+        padding-left: 232px;
+    }
+    #optiii
+    {
+        margin-left: 22px;
+        margin-top: 15px;
+    }
+    #optiilabel
+    {
+        margin-left: -18px;
+    }
+    #optii
+    {
+        margin-left: 18px;
+        
+    }
+    #optivlabel
+    {
+        margin-left: 214px;
+    }
+    #optiv
+    {
+        margin-left: 14px;
+    }
+    #answerlabel
+    {
+        
+        margin-left: 200px;
+    }
+    #answer
+    {
+        margin-top: 36px;
+    }
+
+    #submit
+    {
+        margin-left: 282px;
+        margin-top: 30px;
+        width: 200px;
+        height: 35px;
+    }
+</style>
+
+<script>
+    $(document).ready(function()
+    {
+        $('form').on('submit',function(event)
+        {
+            $.ajax({
+                data:{
+                    question:$("#question").val(),
+                    opt_i:$("#opti").val(),
+                    opt_ii:$("#optii").val(),
+                    opt_iii:$("#optiii").val(),
+                    opt_iv:$("#optiv").val(),
+                    answer:$("#answer").val()
+                },
+                type:'POST',
+                url:'/store'
+            })
+            .done(function(data)
+            {
+                console.log($("#optiii").val())
+                $("#question").val("");
+                $("#opti").val("");
+                $("#optii").val("");
+                $("#optiii").val("");
+                $("#optiv").val("");
+                $("#answer").val("");
+                console.log("successfull");
+            });
+            event.preventDefault()
+        });
+    });
+</script>
+
+</body>
+</html>

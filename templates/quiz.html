@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="static/socket.io.min.js"></script>
+    <script src="static/jquery-3.5.1.min.js"></script>
+    <title>Quiz</title>
+</head>
+
+<body>
+
+    <div id="timer"></div>
+    <span id="show_result" style="display: none;">Your Score is: </span>
+    <span id="result"></span>
+    <br>
+    <br id="br" style="display: none;">
+    <span id="question_tag" style="display: none;">Questions</span>
+    <span id="answered_tag" style="display: none;">Answered</span>
+    <span id="correct_tag" style="display: none;">Correct</span>
+    <br>
+    <div id="attemts"></div>
+
+    <form action="">
+
+        <div id="question"></div>
+        <!-- <div id="opt_i"></div>
+        <div id="opt_ii"></div>
+        <div id="opt_iii"></div>
+        <div id="opt_iv"></div> -->
+        <div id=adjust>
+            <input type="radio" id="first" name="ans" value="1" style="display: none;" required>
+            <Label id="opt_i" for="first"></Label>
+            <br>
+            <input type="radio" id="second" name="ans" value="2" style="display: none;" required>
+            <Label id="opt_ii" for="second"></Label>
+            <br>
+            <input type="radio" id="third" name="ans" value="3" style="display: none;" required>
+            <Label id="opt_iii" for="third"></Label>
+            <br>
+            <input type="radio" id="forth" name="ans" value="4" style="display: none;" required>
+            <Label id="opt_iv" for="forth"></Label>
+        </div>
+    </form>
+    <button style="display: none;">Next</button>
+
+    <script>
+        var i = 0;
+        $(document).ready(function () {
+            var timer2 = "02:01";
+            var a = setInterval(function () {
+                $('button').show();
+                $('#first').show();
+                $('#second').show();
+                $("#third").show();
+                $("#forth").show();
+                clearInterval(a);
+                $("input").prop("checked", true);
+                timeup();
+            }, 1000)
+            var interval = setInterval(function () {
+                timer = timer2.split(':');
+                var second = parseInt(timer[1], 10);
+                var minute = parseInt(timer[0], 10);
+                --second;
+                minute = (second < 0) ? --minute : minute;
+
+                second = (second < 0) ? 59 : second;
+                second = (second < 10) ? '0' + second : second;
+                $("#timer").html(minute + ':' + second);
+                if ((minute <= 0) && (second <= 0)) {
+                    clearInterval(interval);
+                    clear();
+                    result();
+                }
+                timer2 = minute + ':' + second;
+            }, 1000);
+            function timeup() {
+                console.log("Success");
+                $("#question").html("{{da[0][0]}}");
+                $("#opt_i").html("{{da[0][1]}}");
+                $("#opt_ii").html("{{da[0][2]}}");
+                $("#opt_iii").html("{{da[0][3]}}");
+                $("#opt_iv").html("{{da[0][4]}}");
+                console.log("{{da[0]}}")
+
+                $('button').click(function (event) {
+                    i++;
+                    $.ajax({
+                        data:
+                        {
+                            question_no: i - 1,
+                            answer: $('input[name="ans"]:checked').val()
+                        },
+                        type: 'POST',
+                        url: '/check'
+                    })
+                        .done(function (data) {
+
+                            $("#question").html(data.data[i][0]);
+                            $("#opt_i").html(data.data[i][1]);
+                            $("#opt_ii").html(data.data[i][2]);
+                            $("#opt_iii").html(data.data[i][3]);
+                            $("#opt_iv").html(data.data[i][4]);
+                            console.log(data.data[i][0]);
+                            var ans = $('input[name="ans"]:checked').val();
+                            console.log(ans)
+                            // $("input").prop("checked", false);
+                        });
+                    event.preventDefault()
+                    //console.log(i);
+                });
+            };
+
+            function clear() {
+                $("#br").show();
+                $("#show_result").show();
+                $("#question_tag").show();
+                $("#answered_tag").show();
+                $("#correct_tag").show();
+                $('#question').hide();
+                $('#opt_i').hide();
+                $('#opt_ii').hide();
+                $('#opt_iii').hide();
+                $('#opt_iv').hide();
+                $('#timer').hide();
+                $('button').hide();
+                $('#first').hide();
+                $('#second').hide();
+                $("#third").hide();
+                $("#forth").hide();
+            };
+            function result(event) {
+                $.ajax({
+                    data: {
+                        name: "Roshan"
+                    },
+                    type: 'GET',
+                    url: '/result'
+                })
+                    .done(function (data) {
+                        $("#result").html(data.c)
+                        $.each(data.attempts, function (index, value) {
+                            $('#attemts').append('<span id="attempted">' + data.attempts[index] + '</span>' + '<span id="answered">' + data.answered[index] + '</span>' + '<span id="correct">' + data.correct[index] + '</span>' + '<br>');
+
+                        });
+
+                    });
+            };
+        });
+    </script>
+
+    <style>
+        #timer {
+            color: green;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        #question {
+
+            width: 800px;
+
+            margin-left: 377px;
+            font-size: 20px;
+            color: blue;
+        }
+
+        form {
+            margin-top: 50px;
+        }
+
+
+
+        #adjust {
+            width: 600px;
+            margin-top: 25px;
+            margin-left: 377px;
+        }
+
+        button {
+            margin-left: 587px;
+            margin-top: 27px;
+            height: 30px;
+            width: 50px;
+        }
+
+        #answered {
+            position: absolute;
+            display: inline-block;
+            left: 850px;
+        }
+
+        #correct {
+            position: absolute;
+            display: inline-block;
+            left: 1100px;
+        }
+
+        #answered_tag {
+            margin-left: 763px;
+            font-weight: bold;
+        }
+
+        #correct_tag {
+            margin-left: 170px;
+            font-weight: bold;
+        }
+
+        #attemts {
+            margin-top: 10px;
+        }
+
+        #question_tag {
+            font-weight: bold;
+        }
+    </style>
+
+
+</body>
+
+</html>
